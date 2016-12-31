@@ -56,8 +56,10 @@ Implementations for both data sets are in `get_ucihar()` and `get_ucihar_avgs()`
 
 ## Code book for the `ucihar` data set
 
+The following maps variables from the [source details document](http://archive.ics.uci.edu/ml/machine-learning-databases/00240/UCI%20HAR%20Dataset.names) to the new variable names:
+  
 `subject_id`
-  : subject ID (number in [1,30])
+  : "An identifier of the subject who carried out the experiment."
 
 `activity`
   : Type of activity being performed (`r unique(ucihar$activity)`)
