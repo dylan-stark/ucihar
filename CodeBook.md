@@ -44,7 +44,8 @@ The following are the steps taken to create the `ucihar_avgs` data set:
 -   Summarise all fields using `mean()`
 
 Implementations for both data sets are in `get_ucihar()` and
-`get_ucihar_avgs()` in [`data-raw/ucihar.R`](../data-raw/ucihar.R).
+`get_ucihar_avgs()` in
+[`data-raw/run_analysis.R`](data-raw/run_analysis.R).
 
 Code book for the `ucihar` data set
 -----------------------------------
