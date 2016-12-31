@@ -1,0 +1,15 @@
+Package: ucihar
+Type: Package
+Title: Human Activity Recognition Using Smartphones Data Set
+Version: 0.1.0
+Authors@R: c(
+    person("Dylan", "Stark", , "dylan.stark@gmail.com", c("aut", "cre"))
+    )
+Description: Human Activity Recognition Using Smartphones Data Set data
+    from the UCI Machine Learning repository.
+License: CC0
+Encoding: UTF-8
+LazyData: true
+URL: http://github.com/dylan-stark/ucihar
+BugReports: https://github.com/hadley/ucihar/issues
+RoxygenNote: 5.0.1
