@@ -44,7 +44,7 @@ The following are the steps taken to create the `ucihar_avgs` data set:
 -   Summarise all fields using `mean()`
 
 Implementations for both data sets are in `get_ucihar()` and
-`get_ucihar_avgs()` in [`data-raw/ucihar.R`](data-raw/ucihar.R).
+`get_ucihar_avgs()` in [`../data-raw/ucihar.R`](data-raw/ucihar.R).
 
 Code book for the `ucihar` data set
 -----------------------------------
@@ -60,5 +60,55 @@ to the new variable names:
 Type of activity being performed (standing, sitting, laying, walking,
 walking\_downstairs, walking\_upstairs)
 
-`time_body_acc_mean_{x,y,z}`, `time_body_acc_std_{x,y,z}`  
-Mean and std. dev. of body acceleration
+`time_body_acc_{mean,std}_{x,y,z}`, `time_body_acc_mag_{mean,std}`, `time_body_acc_jerk_{mean,std}_{x,y,z}`, `time_body_acc_jerk_mag_{mean,std}`  
+mean and standard deviation body acceleration, in time domain; units are
+g's; ref. `tBodyAcc-XYZ`, `tBodyAccMag`, `tBodyAccJerk-XYZ`,
+`tBodyAccJerkMag-XYZ`
+
+`time_body_gyro_{mean,std}_{x,y,z}`, `time_body_gyro_mag_{mean,std}`, `time_body_gyro_jerk_{mean,std}_{x,y,z}`, `time_body_gyro_jerk_mag_{mean,std}`  
+mean and standard deviation body angulary velocity, in time domain;
+units are rad/seg; ref. `tBodyGyro-XYZ`, `tBodyGyroMag`,
+`tBodyGyroJerk-XYZ`, `tBodyGyroJerkMag-XYZ`
+
+`time_gravity_acc_{mean,std}_{x,y,z}`, `time_gravity_acc_mag_{mean,std}`  
+mean and standard deviation gravity in x, y, and z directions, in time
+domain; units are g's; ref. `tGravityAcc-XYZ`, `tGravityAccMag`
+
+`freq_body_acc_{mean,std}_{x,y,z}`, `freq_body_acc_mag_{mean,std}`, `freq_body_acc_jerk_{mean,std}_{x,y,z}`, `freq_body_body_acc_jerk_mag_{mean,std}`  
+mean and standard deviation body acceleration, in frequency domain;
+units are g's; ref. `fBodyAcc-XYZ`, `fBodyAccMag`, `fBodyAccJerk-XYZ`,
+`fBodyBodyAccJerkMag`
+
+`freq_body_gyro_{mean,std}_{x,y,z}`, `freq_body_body_gyro_mag_{mean,std}`, `freq_body_body_gyro_jerk_mag_{mean,std}`  
+mean and standard deviation body angulary velocity, in frequency domain;
+units are rad/seg; ref. `fBodyGyro-XYZ`, `fBodyBodyGyroMag`,
+`fBodyBodyGyroJerkMag`
+
+Code book for the `ucihar_avgs` data set
+----------------------------------------
+
+This data set summarises measurements from `ucihar`, grouped by subject
+and activity. In all cases, the measurements are averaged with `mean()`.
+See the above `ucihar` code book (above) for more details.
+
+`subject_id`  
+"An identifier of the subject who carried out the experiment."
+
+`activity`  
+Type of activity being performed (standing, sitting, laying, walking,
+walking\_downstairs, walking\_upstairs)
+
+`time_body_acc_{mean,std}_{x,y,z}`, `time_body_acc_mag_{mean,std}`, `time_body_acc_jerk_{mean,std}_{x,y,z}`, `time_body_acc_jerk_mag_{mean,std}`  
+mean by `subject_id` and `activity`
+
+`time_body_gyro_{mean,std}_{x,y,z}`, `time_body_gyro_mag_{mean,std}`, `time_body_gyro_jerk_{mean,std}_{x,y,z}`, `time_body_gyro_jerk_mag_{mean,std}`  
+mean by `subject_id` and `activity`
+
+`time_gravity_acc_{mean,std}_{x,y,z}`, `time_gravity_acc_mag_{mean,std}`  
+mean by `subject_id` and `activity`
+
+`freq_body_acc_{mean,std}_{x,y,z}`, `freq_body_acc_mag_{mean,std}`, `freq_body_acc_jerk_{mean,std}_{x,y,z}`, `freq_body_body_acc_jerk_mag_{mean,std}`  
+mean by `subject_id` and `activity`
+
+`freq_body_gyro_{mean,std}_{x,y,z}`, `freq_body_body_gyro_mag_{mean,std}`, `freq_body_body_gyro_jerk_mag_{mean,std}`  
+mean by `subject_id` and `activity`

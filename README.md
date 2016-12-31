@@ -11,7 +11,7 @@ See the [Code Book](CodeBook.md) for details full details -- all processing and 
 
 Installation:
 
-```
+```r
 devtools::install_github("dylan-stark/ucihar")
 ```
 
