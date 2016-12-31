@@ -41,7 +41,8 @@ get_ucihar_data <- function() {
 
   ucihar <- rbind(test, train) %>%
     inner_join(activity_labels, by = c("activity_id" = "id")) %>%
-    select(subject_id, activity, contains("mean()"), contains("std()"))
+    select(subject_id, activity, contains("mean()"), contains("std()")) %>%
+    mutate(activity = str_to_lower(activity))
 
   names(ucihar) <- names(ucihar) %>%
     str_replace("^f", "freq") %>%
@@ -63,7 +64,7 @@ get_ucihar_avgs <- function(data) {
 }
 
 ucihar <- get_ucihar_data()
-use_data(ucihar)
+use_data(ucihar, overwrite = TRUE)
 
 ucihar_avgs <- get_ucihar_avgs(ucihar)
-use_data(ucihar_avgs)
+use_data(ucihar_avgs, overwrite = TRUE)

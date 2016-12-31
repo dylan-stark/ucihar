@@ -13,3 +13,6 @@ LazyData: true
 URL: http://github.com/dylan-stark/ucihar
 BugReports: https://github.com/hadley/ucihar/issues
 RoxygenNote: 5.0.1
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
