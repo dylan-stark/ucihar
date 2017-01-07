@@ -5,6 +5,17 @@ library(stringr)
 
 ucihar_url <- "http://archive.ics.uci.edu/ml/machine-learning-databases/00240/UCI%20HAR%20Dataset.zip"
 
+clean_names <- function(df) {
+  names(df) <- names(df) %>%
+    str_replace(",", "_") %>%
+    str_replace("^f", "freq") %>%
+    str_replace("^t", "time") %>%
+    str_replace("[(][)]-?", "") %>%
+    str_replace_all("-", "_") %>%
+    str_replace_all("([^_])([A-Z])", "\\1_\\2") %>%
+    str_to_lower()
+}
+
 # Downloads and extracts files into `data-raw/ucihar`
 get_ucihar_data <- function() {
   temp <- tempfile(fileext = ".zip")
@@ -43,8 +54,12 @@ gen_ucihar_training <- function() {
   subject <- read_table("data-raw/ucihar/subject_train.txt",
                         col_names = c("subject_id"))
 
-  cbind(X, y, subject) %>%
+  training <- cbind(X, y, subject) %>%
     inner_join(activity, by = c("activity_id" = "id"))
+
+  names(training) <- clean_names(training)
+
+  training
 }
 
 gen_ucihar_testing <- function() {
@@ -58,25 +73,21 @@ gen_ucihar_testing <- function() {
                         col_names = c("subject_id"))
 
   # TODO: deduplicate feature names
-  cbind(X, y, subject) %>%
+  testing <- cbind(X, y, subject) %>%
     inner_join(activity, by = c("activity_id" = "id"))
+
+  names(testing) <- clean_names(testing)
+
+  testing
 }
 
 gen_ucihar_simple <- function() {
-  train <- ucihar_training()
-  test <- ucihar_testing()
+  train <- gen_ucihar_training()
+  test <- gen_ucihar_testing()
 
   ucihar <- rbind(test, train) %>%
-    select(subject_id, activity, contains("mean()"), contains("std()")) %>%
+    select(subject_id, activity, contains("mean_"), contains("std_")) %>%
     mutate(activity = str_to_lower(activity))
-
-  names(ucihar) <- names(ucihar) %>%
-    str_replace("^f", "freq") %>%
-    str_replace("^t", "time") %>%
-    str_replace("[(][)]-?", "") %>%
-    str_replace_all("-", "_") %>%
-    str_replace_all("([A-Z])", "_\\1") %>%
-    str_to_lower()
 
   ucihar
 }
@@ -97,8 +108,8 @@ use_data(ucihar_training, overwrite = TRUE)
 ucihar_testing <- gen_ucihar_testing()
 use_data(ucihar_testing, overwrite = TRUE)
 
-ucihar <- gen_ucihar_simple()
-use_data(ucihar, overwrite = TRUE)
+ucihar_simple <- gen_ucihar_simple()
+use_data(ucihar_simple, overwrite = TRUE)
 
 ucihar_avgs <- gen_ucihar_avgs(ucihar)
 use_data(ucihar_avgs, overwrite = TRUE)
