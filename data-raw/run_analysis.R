@@ -3,14 +3,13 @@ library(readr)
 library(dplyr)
 library(stringr)
 
+ucihar_url <- "http://archive.ics.uci.edu/ml/machine-learning-databases/00240/UCI%20HAR%20Dataset.zip"
+
+# Downloads and extracts files into `data-raw/ucihar`
 get_ucihar_data <- function() {
-  url <- "http://archive.ics.uci.edu/ml/machine-learning-databases/00240/UCI%20HAR%20Dataset.zip"
-
-  # Download full data set
   temp <- tempfile(fileext = ".zip")
-  raw_zip <- download.file(url, temp)
+  raw_zip <- download.file(ucihar_url, temp)
 
-  # Extract necessary files
   files <- c(
     "UCI HAR Dataset/features.txt",
     "UCI HAR Dataset/activity_labels.txt",
@@ -22,25 +21,52 @@ get_ucihar_data <- function() {
     "UCI HAR Dataset/train/subject_train.txt"
   )
   unzip(temp, exdir = "data-raw/ucihar", junkpaths = TRUE, files = files)
+}
 
-  features <- read_delim("data-raw/ucihar/features.txt", delim = " ",
-                         col_names = c("id", "feature"))
+gen_ucihar_features <- function() {
+  read_delim("data-raw/ucihar/features.txt", delim = " ",
+             col_names = c("id", "feature"))
+}
+
+gen_ucihar_activity <- function() {
+  activity <- read_table("data-raw/ucihar/activity_labels.txt",
+                         col_names = c("id", "activity"))
+}
+
+gen_ucihar_training <- function() {
+  features <- ucihar_features()
+  activity <- ucihar_activity()
+
+  X <- read_table("data-raw/ucihar/X_train.txt", col_names = features$feature,
+                  col_types = cols(.default = col_double()))
+  y <- read_table("data-raw/ucihar/y_train.txt", col_names = c("activity_id"))
+  subject <- read_table("data-raw/ucihar/subject_train.txt",
+                        col_names = c("subject_id"))
+
+  cbind(X, y, subject) %>%
+    inner_join(activity, by = c("activity_id" = "id"))
+}
+
+gen_ucihar_testing <- function() {
+  features <- ucihar_features()
+  activity <- ucihar_activity()
+
+  X <- read_table("data-raw/ucihar/X_test.txt", col_names = features$feature,
+                  col_types = cols(.default = col_double()))
+  y <- read_table("data-raw/ucihar/y_test.txt", col_names = c("activity_id"))
+  subject <- read_table("data-raw/ucihar/subject_test.txt",
+                        col_names = c("subject_id"))
 
   # TODO: deduplicate feature names
-  test <- read_table("data-raw/ucihar/X_test.txt", col_names = features$feature,
-                     col_types = cols(.default = col_double())) %>%
-    cbind(read_table("data-raw/ucihar/y_test.txt", col_names = c("activity_id"))) %>%
-    cbind(read_table("data-raw/ucihar/subject_test.txt", col_names = c("subject_id")))
+  cbind(X, y, subject) %>%
+    inner_join(activity, by = c("activity_id" = "id"))
+}
 
-  train <- read_table("data-raw/ucihar/X_train.txt", col_names = features$feature,
-                      col_types = cols(.default = col_double())) %>%
-    cbind(read_table("data-raw/ucihar/y_train.txt", col_names = c("activity_id"))) %>%
-    cbind(read_table("data-raw/ucihar/subject_train.txt", col_names = c("subject_id")))
-
-  activity_labels <- read_table("data-raw/ucihar/activity_labels.txt", col_names = c("id", "activity"))
+gen_ucihar_simple <- function() {
+  train <- ucihar_training()
+  test <- ucihar_testing()
 
   ucihar <- rbind(test, train) %>%
-    inner_join(activity_labels, by = c("activity_id" = "id")) %>%
     select(subject_id, activity, contains("mean()"), contains("std()")) %>%
     mutate(activity = str_to_lower(activity))
 
@@ -55,16 +81,24 @@ get_ucihar_data <- function() {
   ucihar
 }
 
-get_ucihar_avgs <- function(data) {
-  ucihar_avgs <- data %>%
+gen_ucihar_avgs <- function(data) {
+  data %>%
     group_by(subject_id, activity) %>%
     summarise_all(mean)
-
-  ucihar_avgs
 }
 
-ucihar <- get_ucihar_data()
+################################################################################
+
+get_ucihar_data()
+
+ucihar_training <- gen_ucihar_training()
+use_data(ucihar_training, overwrite = TRUE)
+
+ucihar_testing <- gen_ucihar_testing()
+use_data(ucihar_testing, overwrite = TRUE)
+
+ucihar <- gen_ucihar_simple()
 use_data(ucihar, overwrite = TRUE)
 
-ucihar_avgs <- get_ucihar_avgs(ucihar)
+ucihar_avgs <- gen_ucihar_avgs(ucihar)
 use_data(ucihar_avgs, overwrite = TRUE)
